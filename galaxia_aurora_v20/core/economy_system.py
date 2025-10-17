@@ -1,17 +1,13 @@
-import logging
 from .base_system import MilitaryBase
 
-class EconomySystem:
+class Economy:
     def __init__(self):
-        self.base_rates = {
-            "Metal": 100, "Energy": 50, "Food": 10,
-            "Ether": 0.1, "TechPoints": 20
-        }
+        """Initializes resource production."""
+        self.production = {"Energy": 10, "Metal": 5, "Rare Food": 1, "Aether": 0}
 
-    def calculate_factor(self, base: MilitaryBase) -> float:
-        return max(0.25, base.pleb_morale / base.max_morale) * base.production_bonus
-
-    def execute_production(self, base: MilitaryBase):
-        factor = self.calculate_factor(base)
-        base.produce_resources(factor)
-        logging.info(f"💰 Economy: Factor {factor:.2f} | Production active")
+    def generate_resources(self, base: MilitaryBase):
+        """Generates resources based on the base's morale."""
+        factor = max(0.25, base.morale / 100)
+        for resource, value in self.production.items():
+            base.resources[resource] += int(value * factor)
+        return "Production complete."

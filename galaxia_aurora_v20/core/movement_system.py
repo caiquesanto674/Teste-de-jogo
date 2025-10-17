@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, Any
 
 @dataclass(frozen=True)
 class Position:
@@ -10,13 +9,13 @@ class GameMap:
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
-        self.grid: Dict[Position, Any] = {}
+        self.grid = {}
 
-    def add_entity(self, entity: Any, position: Position):
+    def add_entity(self, entity, position: Position):
         self.grid[position] = entity
         entity.position = position
 
-    def move_entity(self, entity: Any, new_position: Position):
+    def move_entity(self, entity, new_position: Position):
         old_position = entity.position
         if old_position in self.grid:
             del self.grid[old_position]
