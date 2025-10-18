@@ -1,5 +1,5 @@
 def clamp(value, min_value, max_value):
-    """Restricts a value between a minimum and a maximum."""
+    """Clamps a value between a minimum and a maximum."""
     return max(min_value, min(value, max_value))
 
 class MilitaryBase:
@@ -13,7 +13,7 @@ class MilitaryBase:
         self.production_bonus = 1.0
         self.defenses = 1.0
 
-    def apply_impact(self, impact):
+    def apply_morale_impact(self, impact):
         """Applies an impact to the base's morale."""
         self.morale = clamp(self.morale + impact, 0, self.max_morale)
         return f"Current morale: {self.morale}"
