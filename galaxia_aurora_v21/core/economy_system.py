@@ -25,3 +25,13 @@ class Economy:
             print("[UPGRADE] Tech Improved/Tech Aprimorada")
             return True
         return False
+
+    def purchase_resource(self, resource_name: str, amount: int) -> bool:
+        cost = self.prices.get(resource_name, 9999) * amount
+        if self.gold >= cost:
+            self.gold -= cost
+            # In a real system, we'd add this to a resource inventory.
+            print(f"Purchased {amount} of {resource_name}.")
+            return True
+        print(f"Insufficient gold to purchase {resource_name}.")
+        return False

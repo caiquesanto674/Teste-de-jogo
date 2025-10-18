@@ -19,9 +19,11 @@ class AIProtocol:
 
         # Market AI Logic
         if self.name == "Market AI" and "economy" in context:
-            metal_price = context["economy"].prices.get('metal', 100)
-            if metal_price < 9.5:
-                msg = f"Market Alert: Metal price is low (${metal_price}). Opportunity to buy."
+            economy = context["economy"]
+            metal_price = economy.prices.get('metal', 100)
+            if metal_price < 9.5 and economy.gold > 500:
+                msg = f"Market Alert: Metal price is low (${metal_price}). AI suggests purchase."
+                economy.purchase_resource("metal", 20)
 
         # Defense AI Logic
         if self.name == "Defense/Tactics" and "characters" in context:

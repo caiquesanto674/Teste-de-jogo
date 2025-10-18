@@ -31,4 +31,4 @@ class AuthManager:
             print(f"Admin user 'Monarca' ({character.name}) logged in.")
 
     def is_admin(self, character: 'Character') -> bool:
-        return character.name in self.admin_users
+        return character.name in self.admin_users and self.admin_users[character.name] == "Monarca"

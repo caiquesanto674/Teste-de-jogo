@@ -1,20 +1,29 @@
 import json
 import hashlib
 from ..core.security_system import CryptoSystem
-from .cloud_storage import CloudStorage
+from .storage_service import StorageService
 
 class SecureBackup:
-    def __init__(self, storage: CloudStorage):
+    def __init__(self, storage: StorageService):
         self.storage = storage
         self.crypto = CryptoSystem()
 
-    def backup(self, key: str, data: str):
-        """Hashes and stores data securely."""
-        data_hash = str(hashlib.sha256(data.encode()).hexdigest())
-        # In a real scenario, we might encrypt the data itself, not just the hash
-        self.storage.save(key, data_hash)
-        print(f"Secure backup stored for: {key}")
+    def backup(self, key: str, data: dict):
+        """Encrypts and saves the game state to cloud storage."""
+        # Serialize game state to a JSON string
+        game_state_str = json.dumps(data)
 
-    def restore(self, key: str) -> str:
-        """Restores a backup from storage."""
-        return self.storage.load(key)
+        # Encrypt the data
+        encrypted_data = self.crypto.encrypt(game_state_str)
+
+        # Save to cloud storage
+        self.storage.save(key, encrypted_data)
+        print(f"Secure backup '{key}' created successfully.")
+
+    def load_backup(self, key: str) -> dict:
+        """Loads and decrypts a backup from cloud storage."""
+        encrypted_data = self.storage.load(key)
+        if encrypted_data:
+            decrypted_str = self.crypto.decrypt(encrypted_data)
+            return json.loads(decrypted_str)
+        return None
