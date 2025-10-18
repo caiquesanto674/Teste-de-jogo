@@ -1,6 +1,6 @@
-# Simulação de Comando e Segurança
+# Simulação de Protocolo Avançado
 
-Este projeto é uma simulação de um centro de comando militar, escrito em Python, com foco em segurança, economia e operações de IA.
+Este projeto é uma simulação de um centro de comando avançado, escrito em Python, com foco em protocolos de poder, economia dinâmica, IA evolutiva e métricas de desempenho.
 
 ## Visão Geral
 
@@ -8,9 +8,12 @@ O projeto é estruturado da seguinte forma:
 
 - `src/`: Contém todo o código-fonte da simulação.
   - `main.py`: O ponto de entrada principal para executar a simulação.
-  - `security.py`: Contém as classes para autenticação, criptografia e backup.
-  - `economy.py`: Gerencia a economia da base e o mercado.
-  - `simulation.py`: Contém as classes para a simulação principal, incluindo a base militar, personagens e IA.
+  - `services.py`: Contém o serviço de armazenamento em nuvem.
+  - `economy.py`: Gerencia a economia do jogo.
+  - `protocols.py`: Define os protocolos de poder e IA.
+  - `entities.py`: Define as entidades do jogo, como personagens.
+  - `metrics.py`: Contém o validador de métricas de desempenho.
+  - `simulation.py`: Contém a classe principal da base militar que orquestra a simulação.
 - `tests/`: Contém os testes de unidade para o projeto.
 
 ## Como Executar a Simulação

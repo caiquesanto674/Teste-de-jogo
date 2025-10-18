@@ -1,64 +1,39 @@
 import random
-from typing import Dict
 
-# =================== ECONOMIA, TECNOLOGIA E MERCADO ===================
-
+# ==================== MÓDULO 2: ECONOMIA E TECNologia (IA OTIMIZADA) ====================
 class Economy:
     """
-    Gerencia a economia da base, incluindo balanço financeiro, nível tecnológico,
-    e um mercado de recursos com preços dinâmicos.
+    Gerencia a economia do jogo, incluindo ouro, nível de tecnologia e preços
+    de mercado para vários recursos.
     """
     def __init__(self):
         """Inicializa o sistema de economia."""
-        self.balance: float = 1200.0
-        self.tech: float = 1.5
-        self.market: Dict[str, float] = {'metal': 11.0, 'energia': 16.0, 'criptomoeda': 0.02}
-        self.crypto: float = 0.02  # Suporte cripto e moedas futuras
+        self.gold = 1500.0
+        self.technology = 4.0  # Nível Avançado (V4.0)
+        self.prices = {"metal": 12.0, "energy": 18.0, "ether": 50.0}
 
-    def update(self):
+    def update_market(self):
         """
-        Atualiza os preços do mercado com base em uma variação aleatória e no
-        nível de tecnologia da base.
+        Atualiza os preços do mercado com base na volatilidade do mercado e na
+        influência da tecnologia.
         """
-        for m in self.market:
-            var = random.uniform(-0.04, 0.11) + (self.tech / 100)
-            self.market[m] = max(1, round(self.market[m] * (1 + var), 2))
+        tech_influence = self.technology / 80 # Maior estabilidade
+        for resource in self.prices:
+            factor = 1 + random.uniform(-0.03, 0.06) + tech_influence
+            self.prices[resource] = max(1.0, round(self.prices[resource] * factor, 2))
 
-    def buy(self, item: str, qtd: int) -> bool:
+    def upgrade_technology(self, cost: float = 150.0) -> bool:
         """
-        Compra uma quantidade de um item do mercado, se houver saldo suficiente.
+        Faz o upgrade do nível de tecnologia se houver ouro suficiente.
 
         Args:
-            item: O item a ser comprado.
-            qtd: A quantidade a ser comprada.
-
-        Returns:
-            True se a compra for bem-sucedida, False caso contrário.
-        """
-        val = self.market[item] * qtd
-        if self.balance >= val:
-            self.balance -= val
-            print(f"Comprado: {qtd} {item}, custo: {val:.2f}")
-            return True
-        print(f"Saldo insuficiente para {item}.")
-        return False
-
-    def upgrade_tech(self, invest: int = 100) -> bool:
-        """
-        Realiza um upgrade no nível de tecnologia da base, se houver saldo
-        suficiente para o investimento.
-
-        Args:
-            invest: O valor a ser investido no upgrade.
+            cost: O custo do upgrade de tecnologia.
 
         Returns:
             True se o upgrade for bem-sucedido, False caso contrário.
         """
-        if self.balance >= invest:
-            self.balance -= invest
-            self.tech += 0.5
-            print(f"Tech upgrade! Nível atual: {self.tech:.2f}")
+        if self.gold >= cost:
+            self.gold -= cost
+            self.technology += 0.75 # Aumento significativo
             return True
-        else:
-            print("Investimento insuficiente.")
-            return False
+        return False
