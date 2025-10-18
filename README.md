@@ -1,6 +1,6 @@
-# Simulação de Protocolo Avançado
+# Simulação de Estratégia Apolo
 
-Este projeto é uma simulação de um centro de comando avançado, escrito em Python, com foco em protocolos de poder, economia dinâmica, IA evolutiva e métricas de desempenho.
+Este projeto é uma simulação de um jogo de estratégia em tempo real, escrito em Python, com foco em gerenciamento de recursos, desenvolvimento de tecnologia e automação de IA.
 
 ## Visão Geral
 
@@ -8,12 +8,10 @@ O projeto é estruturado da seguinte forma:
 
 - `src/`: Contém todo o código-fonte da simulação.
   - `main.py`: O ponto de entrada principal para executar a simulação.
-  - `services.py`: Contém o serviço de armazenamento em nuvem.
-  - `economy.py`: Gerencia a economia do jogo.
-  - `protocols.py`: Define os protocolos de poder e IA.
+  - `core.py`: Contém a classe principal da base militar.
+  - `economy.py`: Gerencia a economia do jogo, incluindo tecnologia e recursos.
   - `entities.py`: Define as entidades do jogo, como personagens.
-  - `metrics.py`: Contém o validador de métricas de desempenho.
-  - `simulation.py`: Contém a classe principal da base militar que orquestra a simulação.
+  - `ai.py`: Contém o protocolo de IA para tomada de decisões autônomas.
 - `tests/`: Contém os testes de unidade para o projeto.
 
 ## Como Executar a Simulação

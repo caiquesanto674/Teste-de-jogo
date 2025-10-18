@@ -1,39 +1,66 @@
-import random
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
-# ==================== MÓDULO 2: ECONOMIA E TECNologia (IA OTIMIZADA) ====================
-class Economy:
+if TYPE_CHECKING:
+    from src.core import MilitaryBase, Resource
+
+# ==================== MÓDULO 2: ECONOMIA E TECNOLOGIA (Tycoon) ====================
+class Technology:
     """
-    Gerencia a economia do jogo, incluindo ouro, nível de tecnologia e preços
-    de mercado para vários recursos.
+    Gerencia o nível de tecnologia da base.
     """
     def __init__(self):
-        """Inicializa o sistema de economia."""
-        self.gold = 1500.0
-        self.technology = 4.0  # Nível Avançado (V4.0)
-        self.prices = {"metal": 12.0, "energy": 18.0, "ether": 50.0}
+        """Inicializa o sistema de tecnologia."""
+        self.level: float = 1.0
 
-    def update_market(self):
-        """
-        Atualiza os preços do mercado com base na volatilidade do mercado e na
-        influência da tecnologia.
-        """
-        tech_influence = self.technology / 80 # Maior estabilidade
-        for resource in self.prices:
-            factor = 1 + random.uniform(-0.03, 0.06) + tech_influence
-            self.prices[resource] = max(1.0, round(self.prices[resource] * factor, 2))
+    def upgrade(self):
+        """Aumenta o nível de tecnologia."""
+        self.level += 0.5
+        print(f"[TECH UPGRADE]: Nível de tecnologia atualizado para {self.level:.1f}.")
 
-    def upgrade_technology(self, cost: float = 150.0) -> bool:
+class Economy:
+    """
+    Gerencia as operações econômicas da base, como a compra de recursos e
+    upgrades de tecnologia.
+    """
+    def __init__(self, base: MilitaryBase, tech: Technology):
         """
-        Faz o upgrade do nível de tecnologia se houver ouro suficiente.
+        Inicializa o sistema de economia.
 
         Args:
-            cost: O custo do upgrade de tecnologia.
-
-        Returns:
-            True se o upgrade for bem-sucedido, False caso contrário.
+            base: A instância da base militar.
+            tech: A instância do sistema de tecnologia.
         """
-        if self.gold >= cost:
-            self.gold -= cost
-            self.technology += 0.75 # Aumento significativo
+        self.base = base
+        self.tech = tech
+
+    def upgrade_technology(self, cost: float):
+        """
+        Tenta fazer o upgrade da tecnologia, se houver recursos suficientes.
+
+        Args:
+            cost: O custo do upgrade.
+        """
+        if self.base.resources >= cost:
+            self.base.resources -= cost
+            self.tech.upgrade()
+        else:
+            print("[ERRO TYCOON]: Capital insuficiente para upgrade.")
+
+    def purchase_resource(self, resource: Resource, amount: int):
+        """
+        Tenta comprar uma quantidade de um recurso, se houver recursos suficientes.
+
+        Args:
+            resource: O recurso a ser comprado.
+            amount: A quantidade a ser comprada.
+        """
+        cost = resource.price * amount
+        if self.base.resources >= cost:
+            self.base.resources -= cost
+            self.base.add_to_inventory(resource, amount)
+            print(f"[AQUISIÇÃO ESTRATÉGICA]: {amount} unidades de {resource.name} compradas. Custo: {cost:.2f} Ouro.")
             return True
-        return False
+        else:
+            print("[ERRO ESTRATÉGICO]: Capital insuficiente para aquisição.")
+            return False

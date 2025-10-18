@@ -1,69 +1,61 @@
 import unittest
-from src.services import StorageService
-from src.economy import Economy
-from src.protocols import PowerProtocol, AIProtocol
+from src.core import MilitaryBase, Resource
+from src.economy import Economy, Technology
+from src.ai import AIProtocol
 from src.entities import Character
-from src.metrics import MetricXValidator
-from src.simulation import MilitaryBase
 
 class TestSimulation(unittest.TestCase):
 
-    def test_storage_service(self):
-        """Testa o serviço de armazenamento."""
-        storage = StorageService()
-        storage.save("test_key", "test_value")
-        self.assertEqual(storage.data["test_key"], "test_value")
-        storage.sync()
-        self.assertIn("Cloud Sync", storage.log[0])
+    def setUp(self):
+        """Configura os componentes para cada teste."""
+        self.base = MilitaryBase()
+        self.technology = Technology()
+        self.available_resources = [Resource("Éter", 50.0)]
+        self.economy = Economy(self.base, self.technology)
+        self.ai_protocol = AIProtocol(self.economy, self.available_resources)
 
-    def test_economy(self):
-        """Testa o sistema de economia."""
-        economy = Economy()
-        initial_gold = economy.gold
-        economy.upgrade_technology()
-        self.assertLess(economy.gold, initial_gold)
-        initial_prices = economy.prices.copy()
-        economy.update_market()
-        self.assertNotEqual(initial_prices, economy.prices)
+    def test_add_soldier(self):
+        """Testa a adição de um soldado à base."""
+        initial_morale = self.base.morale
+        soldier = Character("Test Soldier")
+        self.base.add_soldier(soldier)
+        self.assertEqual(len(self.base.soldiers), 1)
+        self.assertEqual(self.base.soldiers[0], soldier)
+        self.assertEqual(self.base.morale, initial_morale + 5)
 
-    def test_power_protocol(self):
-        """Testa o protocolo de poder."""
-        power = PowerProtocol("Comandante")
-        self.assertIn("Poder Psicológico", power.abilities)
-        self.assertEqual(power.force_level, 1000)
+    def test_upgrade_technology(self):
+        """Testa o upgrade de tecnologia."""
+        initial_level = self.technology.level
+        self.base.resources = 300
+        self.economy.upgrade_technology(200)
+        self.assertEqual(self.technology.level, initial_level + 0.5)
+        self.assertEqual(self.base.resources, 100)
 
-    def test_ai_protocol(self):
-        """Testa o protocolo de IA."""
-        ai = AIProtocol()
-        initial_version = ai.version
-        ai.evolve_and_verify()
-        self.assertGreaterEqual(ai.version, initial_version)
+    def test_purchase_resource(self):
+        """Testa a compra de recursos."""
+        ether = self.available_resources[0]
+        self.base.resources = 600
+        self.economy.purchase_resource(ether, 10)
+        self.assertEqual(self.base.inventory["Éter"].quantity, 10)
+        self.assertEqual(self.base.resources, 100)
 
-    def test_character(self):
-        """Testa a criação de personagens."""
-        char = Character("Test Character", "Test Role")
-        self.assertEqual(char.name, "Test Character")
-        self.assertIsNotNone(char.id)
-        self.assertIn("Poder Psicológico", char.powers.abilities)
+    def test_ai_analysis(self):
+        """Testa a análise e execução da IA."""
+        self.base.resources = 900
+        self.ai_protocol.analyze_and_execute()
+        self.assertIn("Éter", self.base.inventory)
+        self.assertEqual(self.base.inventory["Éter"].quantity, 10)
+        self.assertEqual(self.base.resources, 400)
 
-    def test_metric_x_validator(self):
-        """Testa o validador de métricas."""
-        metrics = MetricXValidator()
-        impact, latency, data_share = metrics.validate(0.9)
-        self.assertIsInstance(impact, float)
-        self.assertIsInstance(latency, float)
-        self.assertTrue(data_share)
-
-    def test_military_base(self):
-        """Testa a classe da base militar."""
-        base = MilitaryBase("Test Base")
-        base.add_character("Test Commander", "Comandante")
-        self.assertEqual(len(base.characters), 1)
-        initial_gold = base.economy.gold
-        # Force an upgrade for a deterministic test
-        base.economy.gold = 1000
-        base.cycle()
-        self.assertLess(base.economy.gold, initial_gold)
+    def test_character_action_confirmation(self):
+        """Testa a confirmação de ação do personagem."""
+        character = Character("Test Character", volicao_level=50)
+        # Este teste apenas verifica se a função não gera erro.
+        # A verificação da saída é mais adequada para testes de integração.
+        try:
+            character.confirm_action("Test Action")
+        except Exception as e:
+            self.fail(f"confirm_action() gerou uma exceção: {e}")
 
 if __name__ == '__main__':
     unittest.main()
