@@ -2,17 +2,22 @@ import uuid
 import random
 
 class Character:
-    """Playable or NPC character with confirmation phrases."""
-    def __init__(self, name: str, role: str):
+    """
+    [PT] Personagem/NPC com frases de confirmação dinâmicas.
+    [EN] Character/NPC with dynamic confirmation phrases.
+    """
+
+    def __init__(self, name, role):
         self.name = name
         self.role = role
+        self.id = uuid.uuid4().hex
         self.level = 1
-        self.confirm_code = f"CONFIRM_{role.upper()}_{random.randint(100, 999)}"
-        self.phrases = [
-            f"{self.role} '{self.name}': Base is under control. {self.confirm_code}",
-            f"{self.role} '{self.name}': Sector safe, monitoring.",
-            f"{self.role} '{self.name}': AI command received and coded.",
-            f"{self.role} '{self.name}': Level {self.level}, ready for action."
+
+    def get_confirmation_phrase(self) -> str:
+        phrases = [
+            f"{self.role} '{self.name}': Base segura, patrulha verde. // Base secure, patrol green.",
+            f"{self.role} '{self.name}': Prontidão de combate confirmada. // Combat readiness confirmed.",
+            f"{self.role} '{self.name}': Comando IA verificado. // AI command verified.",
+            f"{self.role} '{self.name}': Nível {self.level}, operação pronta. // Level {self.level}, operation ready.",
         ]
-    def speak(self) -> str:
-        return random.choice(self.phrases)
+        return random.choice(phrases)

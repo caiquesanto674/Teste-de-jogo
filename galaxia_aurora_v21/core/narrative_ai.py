@@ -1,31 +1,39 @@
-import datetime
 import random
-from typing import Dict, Any, List
+from datetime import datetime
+from typing import Dict, List, Any
 
-class AIModule:
-    """AI module for defense, narrative, and dynamic analysis."""
-    def __init__(self, name: str):
+class AIProtocol:
+    """
+    [PT] Protocolo IA: Evolução, verificação, narrativa e defesa.
+    [EN] AI protocol: Evolution, self-check, storytelling and defense.
+    """
+
+    def __init__(self, name="AI Core"):
         self.name = name
         self.version = 1.0
         self.log: List[str] = []
 
-    def analyze(self, context: Dict[str, Any]):
-        ts = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-        analysis_result = "AI status normal."
+    def analyze_context(self, context: Dict[str, Any]):
+        ts = datetime.now().strftime('%Y-%m-%d %H:%M')
+        msg = "System Normal/Status IA normal" # Default message
 
+        # Market AI Logic
         if self.name == "Market AI" and "economy" in context:
-            metal_price = context["economy"].market_prices.get('metal', 100)
-            if metal_price < 10.0:
-                analysis_result = f"Market alert: Metal price is low (${metal_price}). Good time to buy."
+            metal_price = context["economy"].prices.get('metal', 100)
+            if metal_price < 9.5:
+                msg = f"Market Alert: Metal price is low (${metal_price}). Opportunity to buy."
 
+        # Defense AI Logic
         if self.name == "Defense/Tactics" and "characters" in context:
-            for char in context["characters"]:
-                # In a real scenario, Character would have health. We'll simulate it.
-                if random.randint(1, 100) < 30: # Simulating a character is in low health
-                    analysis_result = f"Tactical alert: {char.name}'s integrity is low. Recommend support."
+            if any(char.role == "Inimigo" for char in context["characters"]):
+                msg = "Threat Detected: Enemy unit present in the operational area."
 
-        self.log.append(f"{ts}: [{self.name}] {analysis_result}")
-        return analysis_result
+        self.log.append(f"{ts}: [{self.name}] {msg}")
+
+        # Evolutionary upgrade
+        if random.random() > 0.58:
+            self.version += 0.01
+            self.log.append(f"{ts}: [{self.name}] AI upgraded to v{self.version:.2f}")
 
     def auto_learn(self):
         if random.random() > 0.58:

@@ -6,100 +6,103 @@ from typing import List
 from .core.auth_manager import AuthManager
 from .core.character_system import Character
 from .core.economy_system import Economy
-from .core.narrative_ai import AIModule
-from .core.crypto_chat import CryptoChat
-from .integrations.cloud_storage import CloudStorage
-from .integrations.secure_backup import SecureBackup
-
-class ChatLog:
-    def __init__(self):
-        self.log: List[Dict[str, str]] = []
-
-    def send(self, user: str, msg: str):
-        record = {"user": user, "msg": msg, "time": datetime.now().strftime("%d/%m/%Y %H:%M")}
-        self.log.append(record)
-
-    def view_log(self, last: int = 5):
-        print("\n---- Last messages/actions ----")
-        for item in self.log[-last:]:
-            print(f"[{item['time']}] {item['user']}: {item['msg']}")
+from .core.narrative_ai import AIProtocol
+from .core.metrics_system import MetricXValidator
+from .integrations.storage_service import StorageService
 
 class MilitaryBase:
-    """Game command center, simulates a complete operational cycle."""
-    def __init__(self, name: str, auth: AuthManager, chat: CryptoChat, econ: Economy, backup: SecureBackup, ai_stack: List[AIModule], chat_log: ChatLog):
-        self.name = name
-        self.auth = auth
-        self.chat = chat
-        self.econ = econ
-        self.backup = backup
-        self.ai_stack = ai_stack
-        self.chat_log = chat_log
-        self.characters: List[Character] = []
-        self.defense_level = 3
+    """
+    [PT] Núcleo do jogo: centraliza economia, IA, personagens, métricas.
+    [EN] Main game core: centralizes economy, AI, characters, metrics.
+    """
 
-    def add_character(self, name: str, role: str) -> Character:
-        new_char = Character(name, role)
-        self.characters.append(new_char)
-        self.auth.login(new_char) # Log in character on creation
-        phrase = new_char.speak()
-        self.chat_log.send(new_char.name, f"New character activated: {phrase}")
-        return new_char
+    def __init__(self, name, auth_manager, provider='Azure-Google'):
+        self.name = name
+        self.storage = StorageService(provider)
+        self.economy = Economy()
+        self.auth = auth_manager
+        self.ai_stack = [
+            AIProtocol("Defense/Tactics"),
+            AIProtocol("Market AI")
+        ]
+        self.metrics = MetricXValidator()
+        self.characters: List[Character] = []
+        self.game_status = {"defense": 5, "effectiveness": 0.95}
+
+    def add_character(self, name, role):
+        char = Character(name, role)
+        self.characters.append(char)
+        self.auth.login(char)
+        self.storage.save(f"char_{char.id}", vars(char))
+        print(f"Character '{name}' ({role}) added to base.")
 
     def cycle(self):
-        print(f"\n==== Operation cycle: {datetime.now().strftime('%d/%m/%Y %H:%M')} ====")
-        self.econ.update_market()
+        print(
+            f"\n--- [CYCLE/CICLO {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ---"
+        )
+        # Economia/Mercado
+        self.economy.update_market()
 
-        if self.auth.is_admin(self.auth.logged_in_user):
-            self.econ.balance += 100
-            self.defense_level += 1
-            self.chat_log.send("SYSTEM", "Monarca admin bonus applied: +100 Gold, +1 Defense")
+        # Admin Bonus
+        if self.auth.logged_in_user and self.auth.is_admin(self.auth.logged_in_user):
+            self.economy.gold += 100
+            self.game_status["defense"] += 1
+            print("[ADMIN] Monarca bonus applied: +100 Gold, +1 Defense.")
 
-        context = {"economy": self.econ, "characters": self.characters}
-        ai_responses = [ia.analyze(context) for ia in self.ai_stack]
+        # IA/Analise Contextual
+        context = {"economy": self.economy, "characters": self.characters}
+        for ai in self.ai_stack:
+            ai.analyze_context(context)
+            ai.auto_learn()
 
-        for ia in self.ai_stack:
-            ia.auto_learn()
-
-        for p in self.characters:
-            phrase = p.speak()
-            print(phrase)
-            self.chat_log.send(p.name, phrase)
-
-        backup_data = str({"econ_balance": self.econ.balance, "defense": self.defense_level})
-        self.backup.backup(f"backup_{self.name}_{datetime.now().strftime('%H%M%S')}", backup_data)
-        print(f"Current defense: {self.defense_level} | Balance: {self.econ.balance:.2f} | Tech: {self.econ.tech_level:.2f}")
-        self.chat_log.view_log()
-        print("----------- End of cycle -----------\n")
+        # Métrica X
+        impact, latency, morale = self.metrics.validate(
+            self.game_status["effectiveness"]
+        )
+        # Adiciona personagem aleatório
+        if random.random() > 0.88:
+            self.add_character(
+                f"NPC_{random.randint(100,999)}",
+                random.choice(["Aliado", "Inimigo"]),
+            )
+            for ai in self.ai_stack:
+                 if ai.name == "Defense/Tactics":
+                    ai.log.append(
+                        f"{datetime.now()}: Novo personagem/narrativa inserido."
+                    )
+        # Sincronização Cloud
+        self.storage.sync()
+        # Frase confirmação comportamental
+        if self.characters:
+            print(
+                f"[FEEDBACK] {random.choice(self.characters).get_confirmation_phrase()}"
+            )
+        # Métricas
+        print(f"\n--- [MÉTRICA X: DESEMPENHO/PERFORMANCE] ---")
+        print(
+            f"Impacto Estratégico/Impact: {impact:.3f} | Latência/Latency: {latency:.2f} ms | Moral/Morale: {'ALTA/HIGH' if morale else 'BAIXA/LOW'}"
+        )
+        print(
+            f"Tech Level: {self.economy.technology:.2f} | Preço Metal/Metal Price: {self.economy.prices['metal']:.2f}"
+        )
+        # Print AI logs
+        for ai in self.ai_stack:
+             print(
+                f"IA {ai.name} v{ai.version:.2f} | Último log/Last log: {ai.log[-1] if ai.log else 'N/A'}"
+            )
 
 def main():
     auth_manager = AuthManager()
-    economy_system = Economy()
-    crypto_chat = CryptoChat()
-    secure_backup = SecureBackup(CloudStorage('Azure'))
-    chat_log = ChatLog()
-    ai_modules = [
-        AIModule("Defense/Tactics"),
-        AIModule("Market AI"),
-        AIModule("AntiSpam/Messaging")
-    ]
+    # Admin registration/authentication
+    auth_manager.register("Caíque", "password123") # In a real app, this would be secure
 
-    auth_manager.register("admin", "strong_password")
-    mfa_code = auth_manager.users["admin"]["mfa_code"]
-    print("Login successful:", auth_manager.authenticate("admin", "strong_password", mfa_code))
-
-    base = MilitaryBase("Aurora Nexus", auth_manager, crypto_chat, economy_system, secure_backup, ai_modules, chat_log)
-    base.add_character("Caíque de Jesus Santos", "Monarca")
-    base.add_character("Sydra", "Head of Defense")
-    base.add_character("Pyra", "AI Technician")
-
-    for i in range(3):
-        print(f"\n--- CYCLE {i+1} ---")
+    base = MilitaryBase("Aurora Nexus / Baluarte Solaris", auth_manager, "Azure-Google")
+    base.add_character("Caíque", "Comandante Supremo/Supreme Commander")
+    base.add_character("Sydra", "Chefe Defesa/Defense Chief")
+    # Simulação de 3 ciclos/3 cycles
+    for c in range(3):
         base.cycle()
-        time.sleep(0.3)
-
-    # Example of encrypted message
-    encrypted_message = crypto_chat.send("Caleb", "Pyra", "Review perimeter, reinforce smart AI defense.")
-    crypto_chat.receive(encrypted_message)
+        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()
