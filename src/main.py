@@ -1,50 +1,56 @@
-from src.economy import Economia, BaseMilitar
-from src.agent import AgentePPO
-from src.units import UnidadeMilitar, UnidadeSuporte
+import time
+from src.security import AuthManager, CryptoChat, SecureBackup
+from src.economy import Economy
+from src.simulation import AIModule, MilitaryBase, ChatLog
 
 def main():
-    """Função principal para simular o jogo."""
-    # Configuração inicial
-    economia = Economia()
-    base = BaseMilitar()
-    agente_comandante = AgentePPO()
-    agente_inimigo = AgentePPO()
+    """Função principal para executar a simulação."""
+    # Inicialização dos módulos
+    auth = AuthManager()
+    chat = CryptoChat(key="chave_secreta_da_base")
+    backup = SecureBackup(key="chave_secreta_de_backup")
+    econ = Economy()
+    chat_log = ChatLog()
+    ia_stack = [
+        AIModule("Defesa/Tática"),
+        AIModule("Mercado Inteligente"),
+        AIModule("Antispam/Comando Mensagem")
+    ]
 
-    comandante = UnidadeMilitar("Comandante", 20, 100, agente_comandante)
-    suporte = UnidadeSuporte("Suporte", 5, 50, AgentePPO())
-    inimigo = UnidadeMilitar("Inimigo", 30, 100, agente_inimigo)
+    # Registro/autenticação do admin
+    mfa_code = auth.register("admin", "senha@forte")
+    print(f"O código MFA para o admin é: {mfa_code} (simulando entrega segura)")
+    print("Tentativa de login...")
+    is_authenticated = auth.authenticate("admin", "senha@forte", mfa_code)
+    print(f"Login bem-sucedido: {is_authenticated}")
 
-    print("--- Início da Simulação ---")
-    print(f"Recursos Iniciais da Base: {base.recursos}")
-    print(f"Moral Inicial da Base: {base.moral}")
-    print("-" * 20)
+    if not is_authenticated:
+        print("Falha na autenticação. Encerrando a simulação.")
+        return
 
-    # Turno 1: Ações da Base e do Comandante
-    print("--- Turno 1 ---")
-    print(economia.gerar(base))
-    print(base.aplicar_impacto(10))
-    print(f"Recursos Atuais da Base: {base.recursos}")
-    print(f"Moral Atual da Base: {base.moral}")
-    print("-" * 20)
+    # Inicia base militar com três personagens
+    base = MilitaryBase("Aurora Nexus", auth, chat, econ, backup, ia_stack, chat_log)
+    base.add_personagem("Caíque", "Comandante Supremo")
+    base.add_personagem("Sydra Ryl", "Chefe Defesa")
+    base.add_personagem("Pyra", "Técnica AI")
 
-    # Ação do Comandante
-    print(comandante.acao(inimigo, suporte, base))
-    print(f"HP Inimigo: {inimigo.hp}/{inimigo.max_hp}")
-    print(f"Éter restante: {base.recursos['Éter']}")
-    print("-" * 20)
+    # Simula fluxos
+    for ciclo in range(3):
+        print(f"\n--- CICLO {ciclo+1} ---")
+        base.ciclo()
+        time.sleep(0.3)
 
-    # Ação do Inimigo (Contra-ataque)
-    print(inimigo.acao(comandante, None, base))
-    print(f"HP Comandante: {comandante.hp}/{comandante.max_hp}")
-    print("-" * 20)
+    # Exemplo de mensagem cifrada
+    enc = chat.enviar("Caíque", "Pyra", "Revisar perímetro, reforçar defesa inteligente AI.")
+    chat.receber(enc)
 
-    # Ação da Unidade de Suporte
-    print(suporte.acao(comandante, None))
-    print(f"HP Comandante após cura: {comandante.hp}/{comandante.max_hp}")
-    print("-" * 20)
-
-    print("--- Fim da Simulação ---")
-
+    # Exemplo de restauração de backup
+    backup_keys = list(backup.storage.keys())
+    if backup_keys:
+        latest_backup_key = backup_keys[-1]
+        restored_data = backup.restore(latest_backup_key)
+        print(f"\n--- Restauração de Backup ---")
+        print(f"Dados restaurados de '{latest_backup_key}': {restored_data}")
 
 if __name__ == "__main__":
     main()

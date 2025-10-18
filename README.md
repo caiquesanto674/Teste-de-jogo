@@ -1,6 +1,6 @@
-# A Crônica do Comandante Solaris
+# Simulação de Comando e Segurança
 
-Este projeto é uma simulação de um jogo de estratégia baseado em texto, escrito em Python. Ele apresenta um sistema de combate tático, gerenciamento de recursos e uma árvore de comportamento para a tomada de decisões da IA.
+Este projeto é uma simulação de um centro de comando militar, escrito em Python, com foco em segurança, economia e operações de IA.
 
 ## Visão Geral
 
@@ -8,12 +8,9 @@ O projeto é estruturado da seguinte forma:
 
 - `src/`: Contém todo o código-fonte da simulação.
   - `main.py`: O ponto de entrada principal para executar a simulação.
-  - `actions.py`: Define as ações que as unidades podem realizar.
-  - `agent.py`: Contém o agente de IA que toma decisões para as unidades.
-  - `behavior_tree.py`: Implementa a lógica da árvore de comportamento.
-  - `economy.py`: Gerencia a economia da base e a geração de recursos.
-  - `units.py`: Define as unidades militares e suas habilidades.
-  - `utils.py`: Funções utilitárias.
+  - `security.py`: Contém as classes para autenticação, criptografia e backup.
+  - `economy.py`: Gerencia a economia da base e o mercado.
+  - `simulation.py`: Contém as classes para a simulação principal, incluindo a base militar, personagens e IA.
 - `tests/`: Contém os testes de unidade para o projeto.
 
 ## Como Executar a Simulação
