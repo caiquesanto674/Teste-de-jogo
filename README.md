@@ -29,3 +29,15 @@ Para executar os testes de unidade, execute o seguinte comando na raiz do projet
 ```bash
 python3 -m unittest discover tests
 ```
+
+## Como Executar com Docker
+
+Para construir a imagem Docker e executar a simulação em um contêiner, use os seguintes comandos:
+
+```bash
+# Construir a imagem
+docker build -t apolo-strategy .
+
+# Executar a simulação
+docker run apolo-strategy
+```
