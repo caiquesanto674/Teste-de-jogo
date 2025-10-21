@@ -1,0 +1,37 @@
+{
+    "player_units": [
+        {
+            "name": "Commander Caíque",
+            "type": "PSYCHOLOGICAL",
+            "force": 150,
+            "command": 50,
+            "abilities": ["Harem Battle (Command)", "Manipulation (Psychological)"]
+        },
+        {
+            "name": "Tactical Force",
+            "type": "INFANTRY",
+            "force": 250,
+            "moral": 90
+        },
+        {
+            "name": "Drone A-12",
+            "type": "AIRFORCE",
+            "force": 180
+        }
+    ],
+    "npc_units": [
+        {
+            "name": "Lord Enygma",
+            "type": "ARMORED",
+            "force": 180,
+            "command": 40,
+            "abilities": ["Censorship Barrier", "Short Summary (Psychological)"]
+        },
+        {
+            "name": "Unit T-800",
+            "type": "INFANTRY",
+            "force": 220,
+            "moral": 100
+        }
+    ]
+}

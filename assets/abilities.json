@@ -1,0 +1,38 @@
+{
+    "player_abilities": [
+        {
+            "name": "Harem Battle (Command)",
+            "focused_unit_type": "INFANTRY",
+            "energy_cost": 15,
+            "base_damage": 0,
+            "moral_effect": 0,
+            "group_effect_txt": "Inspires troops for +20% Force per turn."
+        },
+        {
+            "name": "Manipulation (Psychological)",
+            "focused_unit_type": "PSYCHOLOGICAL",
+            "energy_cost": 20,
+            "base_damage": 10,
+            "moral_effect": 50,
+            "group_effect_txt": "Causes Panic in target, -50 Morale."
+        }
+    ],
+    "npc_abilities": [
+        {
+            "name": "Censorship Barrier",
+            "focused_unit_type": "ARMORED",
+            "energy_cost": 10,
+            "base_damage": 0,
+            "moral_effect": -20,
+            "group_effect_txt": "Reduces 30% of psychological damage received."
+        },
+        {
+            "name": "Short Summary (Psychological)",
+            "focused_unit_type": "ARMORED",
+            "energy_cost": 30,
+            "base_damage": 20,
+            "moral_effect": 80,
+            "group_effect_txt": "Confuses target, decreasing accuracy."
+        }
+    ]
+}
