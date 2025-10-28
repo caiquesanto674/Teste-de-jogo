@@ -3,161 +3,160 @@ import hashlib
 import random
 from typing import Dict, Any
 
-# =================== SEGURANÇA E AUTENTICAÇÃO ===================
+# =================== SECURITY AND AUTHENTICATION ===================
 
 class AuthManager:
     """
-    Gerencia o registro e a autenticação de usuários usando uma senha com salt
-    e um código de autenticação de múltiplos fatores (MFA).
+    Manages user registration and authentication using a salted password and
+    a multi-factor authentication (MFA) code.
     """
     def __init__(self):
-        """Inicializa o gerenciador de autenticação."""
+        """Initializes the authentication manager."""
         self.users: Dict[str, Dict[str, str]] = {}
 
     def register(self, login: str, password: str) -> str:
         """
-        Registra um novo usuário com um salt e hash de senha e gera um código MFA.
+        Registers a new user with a salt and password hash and generates an MFA code.
 
         Args:
-            login: O nome de usuário para o registro.
-            password: A senha para o novo usuário.
+            login: The username for registration.
+            password: The password for the new user.
 
         Returns:
-            O código MFA gerado para o usuário.
+            The MFA code generated for the user.
         """
         salt = uuid.uuid4().hex
         pwd_hash = hashlib.sha256((password + salt).encode()).hexdigest()
         mfa_code = str(random.randint(100000, 999999))
         self.users[login] = {"salt": salt, "hash": pwd_hash, "mfa_code": mfa_code}
-        print(f"Usuário {login} registrado. O código MFA foi gerado.")
+        print(f"User {login} registered. MFA code has been generated.")
         return mfa_code
 
     def authenticate(self, login: str, password: str, code: str) -> bool:
         """
-        Autentica um usuário verificando o hash da senha e o código MFA.
+        Authenticates a user by verifying the password hash and MFA code.
 
         Args:
-            login: O nome de usuário a ser autenticado.
-            password: A senha a ser verificada.
-            code: O código MFA a ser verificado.
+            login: The username to authenticate.
+            password: The password to verify.
+            code: The MFA code to verify.
 
         Returns:
-            True se a autenticação for bem-sucedida, False caso contrário.
+            True if authentication is successful, False otherwise.
         """
         user = self.users.get(login)
         if not user: return False
         hash_check = hashlib.sha256((password + user['salt']).encode()).hexdigest()
         return hash_check == user["hash"] and code == user["mfa_code"]
 
-# =================== CRIPTOGRAFIA BÁSICA (MENSAGENS) ===================
+# =================== BASIC ENCRYPTION (MESSAGES) ===================
 
 class CryptoChat:
     """
-    Simula um sistema de chat com criptografia de ponta a ponta usando uma
-    chave simétrica simples.
+    Simulates an end-to-end encrypted chat system using a simple symmetric key.
     """
     def __init__(self, key: str):
         """
-        Inicializa o CryptoChat com uma chave de criptografia.
+        Initializes CryptoChat with an encryption key.
 
         Args:
-            key: A chave secreta a ser usada para criptografia e descriptografia.
+            key: The secret key to be used for encryption and decryption.
         """
         if not key:
-            raise ValueError("A chave de criptografia não pode ser vazia.")
+            raise ValueError("The encryption key cannot be empty.")
         self.key = key
 
     def encrypt(self, msg: str) -> str:
         """
-        Criptografa uma mensagem usando a chave da instância.
+        Encrypts a message using the instance's key.
 
         Args:
-            msg: A mensagem a ser criptografada.
+            msg: The message to be encrypted.
 
         Returns:
-            A mensagem criptografada.
+            The encrypted message.
         """
         return ''.join(chr((ord(c) + len(self.key)) % 256) for c in msg)
 
     def decrypt(self, enc: str) -> str:
         """
-        Descriptografa uma mensagem usando a chave da instância.
+        Decrypts a message using the instance's key.
 
         Args:
-            enc: A mensagem criptografada.
+            enc: The encrypted message.
 
         Returns:
-            A mensagem original.
+            The original message.
         """
         return ''.join(chr((ord(c) - len(self.key)) % 256) for c in enc)
 
     def enviar(self, user_from: str, user_to: str, msg: str) -> str:
         """
-        Criptografa e envia uma mensagem para outro usuário.
+        Encrypts and sends a message to another user.
 
         Args:
-            user_from: O remetente da mensagem.
-            user_to: O destinatário da mensagem.
-            msg: A mensagem a ser enviada.
+            user_from: The sender of the message.
+            user_to: The recipient of the message.
+            msg: The message to be sent.
 
         Returns:
-            A mensagem criptografada.
+            The encrypted message.
         """
         enc = self.encrypt(msg)
-        print(f"> [{user_from} -> {user_to}] (cifrada): {enc}")
+        print(f"> [{user_from} -> {user_to}] (encrypted): {enc}")
         return enc
 
     def receber(self, enc: str) -> str:
         """
-        Recebe e descriptografa uma mensagem.
+        Receives and decrypts a message.
 
         Args:
-            enc: A mensagem criptografada recebida.
+            enc: The encrypted message received.
 
         Returns:
-            A mensagem original.
+            The original message.
         """
         dec = self.decrypt(enc)
-        print(f"Mensagem recebida: {dec}")
+        print(f"Received message: {dec}")
         return dec
 
-# =================== BACKUP ELOG CRIPTOGRAFADO ===================
+# =================== ENCRYPTED BACKUP AND LOG ===================
 
 class SecureBackup:
     """
-    Gerencia o backup e a restauração de dados usando criptografia simétrica.
+    Manages data backup and restoration using symmetric encryption.
     """
     def __init__(self, key: str = "backup_secret"):
         """
-        Inicializa o SecureBackup com uma chave de criptografia.
+        Initializes SecureBackup with an encryption key.
 
         Args:
-            key: A chave secreta para criptografar e descriptografar os backups.
+            key: The secret key to encrypt and decrypt backups.
         """
         self.storage: Dict[str, str] = {}
         self.crypto = CryptoChat(key)
 
     def backup(self, key: str, data: str):
         """
-        Criptografa e armazena os dados de backup.
+        Encrypts and stores backup data.
 
         Args:
-            key: A chave de identificação para o backup.
-            data: Os dados a serem armazenados no backup.
+            key: The identification key for the backup.
+            data: The data to be stored in the backup.
         """
         encrypted_data = self.crypto.encrypt(data)
         self.storage[key] = encrypted_data
-        print(f"Backup seguro realizado para: {key}")
+        print(f"Secure backup performed for: {key}")
 
     def restore(self, key: str) -> str | None:
         """
-        Restaura e descriptografa os dados de um backup.
+        Restores and decrypts data from a backup.
 
         Args:
-            key: A chave de identificação do backup a ser restaurado.
+            key: The identification key of the backup to be restored.
 
         Returns:
-            Os dados originais descriptografados, ou None se o backup não for encontrado.
+            The original decrypted data, or None if the backup is not found.
         """
         encrypted_data = self.storage.get(key)
         if encrypted_data:

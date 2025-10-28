@@ -4,137 +4,137 @@ from typing import List, Dict, Any
 from src.security import AuthManager, CryptoChat, SecureBackup
 from src.economy import Economy
 
-# =================== IA/NARRATIVA/PROTEÇÃO MULTICAMADA ===================
+# =================== AI/NARRATIVE/MULTILAYER PROTECTION ===================
 
 class AIModule:
     """
-    Representa um módulo de Inteligência Artificial com capacidade de análise,
-    log e auto-aprendizagem.
+    Represents an Artificial Intelligence module with analysis, logging,
+    and self-learning capabilities.
     """
     def __init__(self, name: str):
         """
-        Inicializa o módulo de IA.
+        Initializes the AI module.
 
         Args:
-            name: O nome do módulo de IA.
+            name: The name of the AI module.
         """
         self.name = name
         self.version: float = 1.0
         self.log: List[str] = []
 
-    def analyze(self, contexto: str) -> str:
+    def analyze(self, context: str) -> str:
         """
-        Analisa um determinado contexto e retorna uma resposta de status.
+        Analyzes a given context and returns a status response.
 
         Args:
-            contexto: O contexto a ser analisado.
+            context: The context to be analyzed.
 
         Returns:
-            A resposta de status da análise.
+            The status response of the analysis.
         """
         ts = datetime.now().strftime('%Y-%m-%d %H:%M')
-        self.log.append(f"{ts}: [{self.name}] análise: {contexto}")
-        if "ataque" in contexto or "hack" in contexto:
-            return "Defesa IA ativada."
-        if "mercado" in contexto:
-            return "Análise de mercado IA feita."
-        if "mensagem" in contexto:
-            return "Proteção anti-fake verificada."
-        return "Status IA regular."
+        self.log.append(f"{ts}: [{self.name}] analysis: {context}")
+        if "attack" in context or "hack" in context:
+            return "AI Defense activated."
+        if "market" in context:
+            return "AI market analysis done."
+        if "message" in context:
+            return "Anti-fake protection verified."
+        return "Regular AI Status."
 
     def auto_learn(self):
         """
-        Simula o processo de auto-aprendizagem, com uma chance de aumentar a
-        versão do módulo de IA.
+        Simulates the self-learning process, with a chance to increase the
+        version of the AI module.
         """
         if random.random() > 0.58:
             self.version += 0.01
-            print(f"AI '{self.name}' upgrade: versão {self.version:.2f}")
+            print(f"AI '{self.name}' upgrade: version {self.version:.2f}")
 
-# =================== PERSONAGENS E FRASES DE COMPORTAMENTO ===================
+# =================== CHARACTERS AND BEHAVIORAL PHRASES ===================
 
 class Character:
     """
-    Representa um personagem no jogo, com um nome, função, nível e um conjunto
-    de frases de comportamento.
+    Represents a character in the game, with a name, role, level, and a set
+    of behavioral phrases.
     """
     def __init__(self, name: str, role: str):
         """
-        Inicializa um novo personagem.
+        Initializes a new character.
 
         Args:
-            name: O nome do personagem.
-            role: A função ou papel do personagem.
+            name: The name of the character.
+            role: The function or role of the character.
         """
         self.name = name
         self.role = role
         self.level: int = 1
         self.confirm_code: str = f"CONFIRM_{role.upper()}_{random.randint(100, 999)}"
         self.phrases: List[str] = [
-            f"{role} '{name}': Base sob controle. {self.confirm_code}",
-            f"{role} '{name}': Setor seguro, monitorando.",
-            f"{role} '{name}': Comando IA recebido e codificado.",
-            f"{role} '{name}': Nível {self.level}, pronto para ação."
+            f"{role} '{name}': Base under control. {self.confirm_code}",
+            f"{role} '{name}': Sector secure, monitoring.",
+            f"{role} '{name}': AI command received and encoded.",
+            f"{role} '{name}': Level {self.level}, ready for action."
         ]
     def falar(self) -> str:
         """
-        Retorna uma frase aleatória do conjunto de frases do personagem.
+        Returns a random phrase from the character's set of phrases.
 
         Returns:
-            Uma frase de comportamento aleatória.
+            A random behavioral phrase.
         """
-        return random.choice(self.phrases)
+        return random.choice(self.phrases[1:])
 
-# =================== LOG DE CHAT E ATITUDES ===================
+# =================== CHAT LOG AND ATTITUDES ===================
 
 class ChatLog:
     """
-    Registra e exibe um log de mensagens e ações que ocorrem na simulação.
+    Records and displays a log of messages and actions that occur in the simulation.
     """
     def __init__(self):
-        """Inicializa o log de chat."""
+        """Initializes the chat log."""
         self.log: List[Dict[str, Any]] = []
     def enviar(self, user: str, msg: str):
         """
-        Adiciona uma nova entrada de log.
+        Adds a new log entry.
 
         Args:
-            user: O usuário que está realizando a ação.
-            msg: A mensagem ou ação a ser registrada.
+            user: The user who is performing the action.
+            msg: The message or action to be recorded.
         """
         registro = {"user": user, "msg": msg, "hora": datetime.now().strftime("%d/%m/%Y %H:%M")}
         self.log.append(registro)
     def ver_log(self, ultimos: int = 5):
         """
-        Exibe as últimas entradas do log.
+        Displays the last entries of the log.
 
         Args:
-            ultimos: O número de últimas entradas a serem exibidas.
+            ultimos: The number of last entries to be displayed.
         """
-        print("\n---- Últimas mensagens/ações ----")
+        print("\n---- Last messages/actions ----")
         for item in self.log[-ultimos:]:
             print(f"[{item['hora']}] {item['user']}: {item['msg']}")
 
-# =================== BASE MILITAR (NÚCLEO) ===================
+# =================== MILITARY BASE (CORE) ===================
 
 class MilitaryBase:
     """
-    A classe principal que representa a base militar e orquestra a simulação.
+    The main class that represents the military base and orchestrates the simulation.
     """
-    def __init__(self, nome: str, auth: AuthManager, chat: CryptoChat, econ: Economy, backup: SecureBackup, ia_cams: List[AIModule], chat_log: ChatLog):
+    def __init__(self, name: str, auth: AuthManager, chat: CryptoChat, econ: Economy, backup: SecureBackup, ia_cams: List[AIModule], chat_log: ChatLog):
         """
-        Inicializa a base militar com todos os seus módulos.
+        Initializes the military base with all its modules.
 
         Args:
-            nome: O nome da base militar.
-            auth: O gerenciador de autenticação.
-            chat: O sistema de chat criptografado.
-            econ: O sistema de economia.
-            backup: O sistema de backup seguro.
-            ia_cams: Uma lista de módulos de IA.
-            chat_log: O log de chat.
+            name: The name of the military base.
+            auth: The authentication manager.
+            chat: The encrypted chat system.
+            econ: The economy system.
+            backup: The secure backup system.
+            ia_cams: A list of AI modules.
+            chat_log: The chat log.
         """
-        self.nome = nome
+        self.nome = name
         self.auth = auth
         self.chat = chat
         self.econ = econ
@@ -144,28 +144,28 @@ class MilitaryBase:
         self.personagens: List[Character] = []
         self.defesa: int = 3
 
-    def add_personagem(self, nome: str, funcao: str):
+    def add_personagem(self, name: str, function: str):
         """
-        Adiciona um novo personagem à base militar.
+        Adds a new character to the military base.
 
         Args:
-            nome: O nome do novo personagem.
-            funcao: A função do novo personagem.
+            name: The name of the new character.
+            function: The function of the new character.
         """
-        novo = Character(nome, funcao)
+        novo = Character(name, function)
         self.personagens.append(novo)
         frase = novo.falar()
-        self.chat_log.enviar(novo.name, f"Novo personagem ativo: {frase}")
+        self.chat_log.enviar(novo.name, f"New character active: {frase}")
 
     def ciclo(self):
         """
-        Executa um único ciclo de simulação, que inclui a atualização da economia,
-        a análise da IA, as ações dos personagens e o backup dos dados.
+        Executes a single simulation cycle, which includes updating the economy,
+        AI analysis, character actions, and data backup.
         """
-        print(f"\n==== Ciclo de operações: {datetime.now().strftime('%d/%m/%Y %H:%M')} ====")
+        print(f"\n==== Operations cycle: {datetime.now().strftime('%d/%m/%Y %H:%M')} ====")
         self.econ.update()
-        respostas_ia = [ia.analyze("ataque, mercado, mensagem") for ia in self.ia_cams]
-        self.defesa += random.choice([0, 1])  # Simulação de eventos
+        respostas_ia = [ia.analyze("attack, market, message") for ia in self.ia_cams]
+        self.defesa += random.choice([0, 1])  # Simulation of events
         for ia in self.ia_cams:
             ia.auto_learn()
 
@@ -175,6 +175,6 @@ class MilitaryBase:
             self.chat_log.enviar(p.name, frase)
 
         self.backup.backup(f"backup_{self.nome}_{datetime.now().strftime('%H%M%S')}", str({"econ": self.econ.balance, "defesa": self.defesa}))
-        print(f"Defesa atual: {self.defesa} | Saldo: {self.econ.balance:.2f} | Tecnologia: {self.econ.tech:.2f}")
+        print(f"Current defense: {self.defesa} | Balance: {self.econ.balance:.2f} | Technology: {self.econ.tech:.2f}")
         self.chat_log.ver_log()
-        print("----------- Fim do ciclo -----------\n")
+        print("----------- End of cycle -----------\n")

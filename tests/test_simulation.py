@@ -40,5 +40,13 @@ class TestSimulation(unittest.TestCase):
         except Exception as e:
             self.fail(f"O ciclo da simulação gerou uma exceção: {e}")
 
+    def test_character_falar_no_leak(self):
+        """Testa se o método falar do Character não vaza o código de confirmação."""
+        char = Character("TestLeak", "Spy")
+        # Executa o método falar várias vezes para garantir a robustez do teste
+        for _ in range(50):
+            phrase = char.falar()
+            self.assertNotIn(char.confirm_code, phrase, "O código de confirmação foi vazado em uma frase.")
+
 if __name__ == '__main__':
     unittest.main()
